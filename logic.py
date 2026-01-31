@@ -1,10 +1,13 @@
 import aiohttp  # A library for asynchronous HTTP requests
 import random
+import asyncio
 
 class Pokemon:
     pokemons = {}
     # Object initialisation (constructor)
     def __init__(self, pokemon_trainer):
+        self.hp= random.randint(75, 250)
+        self.power=random.randint(20,40)
         self.pokemon_trainer = pokemon_trainer
         self.pokemon_number = random.randint(1, 1000)
         self.name = None
@@ -29,7 +32,7 @@ class Pokemon:
         # A method that returns information about the pokémon
         if not self.name:
             self.name = await self.get_name()  # Retrieving a name if it has not yet been uploaded
-        return f"The name of your Pokémon: {self.name}"  # Returning the string with the Pokémon's name
+        return f"The name of your Pokémon: {self.name}\n Power: {self.power}\n HP: {self.hp}"  # Returning the string with the Pokémon's name
 
     async def show_img(self):
         # An asynchronous method to retrieve the URL of a pokémon image via PokeAPI
@@ -38,6 +41,44 @@ class Pokemon:
             async with session.get(url) as response:  # Sending a GET request
                 if response.status == 200:
                     data = await response.json()  # Receiving and decoding JSON response
-                    return data['sprites']['front_deafult'] # Returning a Pokémon's name
+                    return data['sprites']['other']['showdown']['back_default']  # Returning a Pokémon's name
                 else:
-                    return None  # Return the default name if the request fails
+                    return "No image"  # Return the default name if the request fails
+    async def attack(self, enemy):
+        if isinstance(enemy, Wizard):  # Periksa apakah musuh adalah tipe data Penyihir (instance dari kelas Penyihir)
+            kesempatan = random.randint(1,5)
+            if kesempatan == 1:
+                return "Pokemon penyihir menggunakan perisai dalam pertarungan"
+        
+        if enemy.hp > self.power:
+            enemy.hp -= self.power
+            return f"Pertarungan @{self.pokemon_trainer} dengan @{enemy.pokemon_trainer}"
+        else:
+            enemy.hp = 0
+            return f"@{self.pokemon_trainer} menang melawan @{enemy.pokemon_trainer}!"
+        
+class Wizard(Pokemon):
+   async def attack(self, enemy):
+    return await super().attack(enemy) 
+   
+class Fighter(Pokemon):
+    async def attack(self, enemy):
+        Fighter_super = random.randint(5,15)
+        self.power += Fighter_super
+        hasil = await super().attack(enemy)
+        self.power -= Fighter_super
+        return hasil + f"\nPetarung menggunakan serangan super dengan kekuatan:{Fighter_super}"
+
+async def main():
+    wizard = Wizard("username1")
+    fighter = Fighter("username2")
+
+    print(await wizard.info())
+    print()
+    print(await fighter.info())
+    print()
+    print(await fighter.attack(wizard))
+
+
+if __name__ == '__main__':
+    asyncio.run (main())
