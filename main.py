@@ -73,7 +73,7 @@ async def info(ctx):
         else:
             await ctx.send("Gagal menampilkan gambar Pokémon.")  # Melaporkan kesalahan jika kami tidak dapat memuat gambar Pokémon 
     else:
-        await ctx.send("Kamu berhasil mendapatkan Pokémon!")  # Menginformasikan kepada pengguna bahwa Pokémon telah dibuat
+        await ctx.send("Kamu belum mempunyai pokemon!")  # Menginformasikan kepada pengguna bahwa Pokémon telah dibuat
 
 async def feed(ctx):
     author = ctx.author.name  # Dapatkan nama pengguna yang menggunakan perintah
